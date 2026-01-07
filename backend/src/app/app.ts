@@ -5,6 +5,7 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import config from "../config/config";
 import auth from "../lib/auth";
+import { shortUrlRoutes } from "../modules/shortUrl/shortUrl.routes";
 
 dotenv.config();
 
@@ -24,5 +25,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Better Auth routes
 app.all("/api/auth/*splat", toNodeHandler(auth));
+app.use("/api", shortUrlRoutes);
 
 export default app;

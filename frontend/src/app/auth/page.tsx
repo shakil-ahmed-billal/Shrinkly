@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, Link2, Loader2, Lock, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useAuth } from "../../hooks/useAuth";
-import { navigate } from "next/dist/client/components/segment-cache/navigation";
-import { useRouter } from "next/navigation";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -33,7 +32,7 @@ export default function Auth() {
   useEffect(() => {
     if (user) {
       console.log(user);
-      router.push("/")
+      router.push("/");
     }
   }, [user]);
 
@@ -58,7 +57,7 @@ export default function Auth() {
 
     try {
       if (isLogin) {
-        const { error ,data} = await signIn(email, password);
+        const { error, data } = await signIn(email, password);
         if (error) {
           toast({
             variant: "destructive",
@@ -76,7 +75,7 @@ export default function Auth() {
         }
         console.log(data);
       } else {
-        const {data , error} = await signUp(email, password);
+        const { data, error } = await signUp(email, password);
 
         console.log(data);
 
