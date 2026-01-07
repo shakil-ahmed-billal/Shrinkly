@@ -1,13 +1,12 @@
 "use client";
 
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, Link2, Loader2, Lock, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -63,6 +62,11 @@ export default function Auth() {
               error.message === "Invalid login credentials"
                 ? "Invalid email or password. Please try again."
                 : error.message,
+          });
+        } else {
+          toast({
+            title: "Welcome back!",
+            description: "You have been successfully signed in.",
           });
         }
       } else {

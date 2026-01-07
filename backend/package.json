@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "backend ",
   "version": "1.0.0",
   "description": "",
   "main": "server.ts",
@@ -9,7 +9,9 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "studio": "npx prisma studio",
-    "studio:check": "node fix-prisma-studio.js"
+    "studio:check": "node fix-prisma-studio.js",
+    "auth:generate": "npx @better-auth/cli generate --config ./src/lib/auth.ts",
+    "auth:migrate": "npx @better-auth/cli migrate --config ./src/lib/auth.ts"
   },
   "keywords": [],
   "author": "",

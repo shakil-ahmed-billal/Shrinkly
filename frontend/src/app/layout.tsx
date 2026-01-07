@@ -1,8 +1,8 @@
 import { ThemeProvider } from "@/provider/theme-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AuthProvider } from "../hooks/useAuth";
 import "./globals.css";
-import { AuthProvider } from "./hooks/useAuth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,9 +35,6 @@ export default function RootLayout({
         >
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
-        <h1 className="text-3xl font-bold text-red-500">
-          Tailwind CSS Working 🎉
-        </h1>
       </body>
     </html>
   );
