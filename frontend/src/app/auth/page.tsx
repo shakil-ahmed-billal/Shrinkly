@@ -7,6 +7,8 @@ import { ArrowRight, Link2, Loader2, Lock, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useAuth } from "../../hooks/useAuth";
+import { navigate } from "next/dist/client/components/segment-cache/navigation";
+import { useRouter } from "next/navigation";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -26,10 +28,12 @@ export default function Auth() {
 
   const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
-      //   Router.push("/dashboard");
+      console.log(user);
+      router.push("/")
     }
   }, [user]);
 
@@ -41,11 +45,12 @@ export default function Auth() {
     const result = authSchema.safeParse({ email, password });
     if (!result.success) {
       const fieldErrors: { email?: string; password?: string } = {};
-      result.error.errors.forEach((err) => {
+      result.error.errors.forEach((err: any) => {
         if (err.path[0] === "email") fieldErrors.email = err.message;
         if (err.path[0] === "password") fieldErrors.password = err.message;
       });
       setErrors(fieldErrors);
+
       return;
     }
 
@@ -53,7 +58,7 @@ export default function Auth() {
 
     try {
       if (isLogin) {
-        const { error } = await signIn(email, password);
+        const { error ,data} = await signIn(email, password);
         if (error) {
           toast({
             variant: "destructive",
@@ -69,8 +74,12 @@ export default function Auth() {
             description: "You have been successfully signed in.",
           });
         }
+        console.log(data);
       } else {
-        const { error } = await signUp(email, password);
+        const {data , error} = await signUp(email, password);
+
+        console.log(data);
+
         if (error) {
           if (error.message.includes("already registered")) {
             toast({

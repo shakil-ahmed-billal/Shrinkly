@@ -49,7 +49,7 @@ export function useAuth() {
         setSession(sessionResult.data);
         setUser(sessionResult.data.user || null);
       }
-
+      
       return { data: result.data, error: null };
     } catch (error: any) {
       return {
