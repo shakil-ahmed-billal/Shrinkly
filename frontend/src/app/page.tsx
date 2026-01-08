@@ -1,5 +1,6 @@
 "use client"
 
+import Header from "@/components/header/Header";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowRight, BarChart3, Check, Link2, Shield, Zap } from "lucide-react";
@@ -46,25 +47,8 @@ export default function Index() {
   ];
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
-      {/* Header */}
-      <header className="container mx-auto px-4 py-6">
-        <nav className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-              <Link2 className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">Shrinkly</span>
-          </div>
-          <Link href="/auth">
-            <Button variant="glow">
-              Get Started
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        </nav>
-      </header>
-
+    <div className="min-h-screen bg-background overflow-hidden">     
+    <Header/>
       {/* Hero */}
       <section className="container mx-auto px-4 pt-20 pb-32 relative">
         {/* Background effects */}
@@ -116,7 +100,7 @@ export default function Index() {
 
       {/* Features */}
       <section className="container mx-auto px-4 pb-32">
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 mx-auto">
           {features.map((feature, index) => (
             <div
               key={feature.title}
@@ -137,7 +121,7 @@ export default function Index() {
 
       {/* CTA */}
       <section className="container mx-auto px-4 pb-20">
-        <div className="max-w-2xl mx-auto text-center glass-strong rounded-3xl p-12 animate-fade-in">
+        <div className="mx-auto text-center glass-strong rounded-3xl p-12 animate-fade-in">
           <h2 className="text-3xl font-bold text-foreground mb-4">
             Ready to get started?
           </h2>
