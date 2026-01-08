@@ -6,7 +6,6 @@ const createShortUrl = async (
   id: string
 ) => {
   try {
-    // Check user's URL count first
     const urlCount = await prisma.shortUrl.count({
       where: { userId: id },
     });
@@ -15,8 +14,6 @@ const createShortUrl = async (
       throw new Error("Maximum URL limit reached (100 URLs)");
     }
 
-    // Try to create the short URL
-    // Prisma will throw an error if shortCode is not unique
     const create = await prisma.shortUrl.create({
       data: {
         originalUrl: originalUrl,

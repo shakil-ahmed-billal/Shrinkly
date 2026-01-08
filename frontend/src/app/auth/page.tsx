@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useAuth } from "../../hooks/useAuth";
+import Link from "next/link";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -41,7 +42,7 @@ export default function Auth() {
     setErrors({});
 
     // Validate inputs
-    const result = authSchema.safeParse({ email, password });
+    const result:any = authSchema.safeParse({ email, password });
     if (!result.success) {
       const fieldErrors: { email?: string; password?: string } = {};
       result.error.errors.forEach((err: any) => {
@@ -108,6 +109,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+
       {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-surface" />
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -115,6 +117,7 @@ export default function Auth() {
 
       <div className="w-full max-w-md relative z-10 animate-fade-in">
         {/* Logo */}
+        <Link href={"/"}>
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-primary mb-4 shadow-glow">
             <Link2 className="w-8 h-8 text-primary-foreground" />
@@ -124,6 +127,7 @@ export default function Auth() {
             Shorten URLs, track clicks, grow faster
           </p>
         </div>
+        </Link>
 
         {/* Auth Card */}
         <div className="glass-strong rounded-2xl p-8">

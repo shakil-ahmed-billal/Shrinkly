@@ -41,7 +41,7 @@ const createShortUrl = async (req: AuthRequest, res: Response) => {
 
 const getOriginalUrl = async (req: AuthRequest, res: Response) => {
   try {
-    const { code } = req.params;
+    const { code }:any = req.params;
     const url = await shortUrlService.getOriginalUrl(code);
     return res.status(200).json({ success: true, data: url });
   } catch (error: any) {
@@ -54,14 +54,11 @@ const getOriginalUrl = async (req: AuthRequest, res: Response) => {
 
 const redirectToOriginal = async (req: AuthRequest, res: Response) => {
   try {
-    const { code } = req.params;
+    const { code }:any = req.params;
     const url = await shortUrlService.getOriginalUrl(code);
 
-    // Increment click count asynchronously (don't wait)
     shortUrlService.incrementClicks(code).catch(console.error);
 
-    // Return the original URL (client will handle redirect)
-    // Or use actual redirect: res.redirect(url.originalUrl);
     return res.status(200).json({
       success: true,
       data: {
@@ -157,7 +154,7 @@ const checkShortCodeAvailability = async (req: AuthRequest, res: Response) => {
 
 const deleteShortUrl = async (req: AuthRequest, res: Response) => {
   try {
-    const { code } = req.params;
+    const { code }:any = req.params;
 
     if (!req.user) {
       return res.status(401).json({

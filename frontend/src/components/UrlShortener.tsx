@@ -51,7 +51,7 @@ export default function UrlShortener({
       validatedUrl = `https://${validatedUrl}`;
     }
 
-    const result = urlSchema.safeParse(validatedUrl);
+    const result:any = urlSchema.safeParse(validatedUrl);
     if (!result.success) {
       setError(result.error.errors[0].message);
       return;
