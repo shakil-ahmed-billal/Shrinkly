@@ -4,9 +4,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express, { Application } from "express";
 import morgan from "morgan";
-import config from "../config/config";
-import auth from "../lib/auth";
-import { shortUrlRoutes } from "../modules/shortUrl/shortUrl.routes";
+import config from "./config/config.js";
+import { shortUrlRoutes } from "./modules/shortUrl/shortUrl.routes.js";
+import auth from "./lib/auth.js";
+
 
 dotenv.config();
 
@@ -28,8 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 // Short URL routes - register first
 app.use("/api", shortUrlRoutes);
 
-// Better Auth routes - must come after short URL routes to avoid conflicts
-// Use *splat parameter name for Express 5 compatibility
+
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 // Health check route

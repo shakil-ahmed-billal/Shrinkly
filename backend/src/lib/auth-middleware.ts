@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import auth from "./auth";
+import auth from "./auth.js";
 
 export interface AuthRequest extends Request {
   user?: {
@@ -7,6 +7,9 @@ export interface AuthRequest extends Request {
     email: string;
     name: string;
   };
+  params: Request["params"];
+  query: Request["query"];
+  body: Request["body"];
 }
 
 export const authMiddleware = async (
