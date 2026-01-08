@@ -1,5 +1,5 @@
-import app from "./app/app";
-import config from "./config/config";
+import app from "./app.js";
+import config from "./config/config.js";
 
 
 app.get("/", (req, res)=>{

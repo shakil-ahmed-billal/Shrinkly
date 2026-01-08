@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { AuthRequest } from "../../lib/auth-middleware";
+import { AuthRequest } from "../../lib/auth-middleware.js";
 export declare const shortUrlController: {
     createShortUrl: (req: AuthRequest, res: Response) => Promise<Response<any, Record<string, any>>>;
     getOriginalUrl: (req: AuthRequest, res: Response) => Promise<Response<any, Record<string, any>>>;

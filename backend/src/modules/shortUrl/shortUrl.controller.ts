@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { shortUrlService } from "./shortUrl.service";
-import { AuthRequest } from "../../lib/auth-middleware";
+import { shortUrlService } from "./shortUrl.service.js";
+import { AuthRequest } from "../../lib/auth-middleware.js";
 
 const createShortUrl = async (req: AuthRequest, res: Response) => {
   try {

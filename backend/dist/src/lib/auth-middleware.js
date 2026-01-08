@@ -1,4 +1,4 @@
-import auth from "./auth";
+import auth from "./auth.js";
 export const authMiddleware = async (req, res, next) => {
     try {
         const sessionResult = await auth.api.getSession({

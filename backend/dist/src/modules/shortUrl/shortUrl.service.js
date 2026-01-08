@@ -1,4 +1,4 @@
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 const createShortUrl = async (originalUrl, shortCode, id) => {
     try {
         const urlCount = await prisma.shortUrl.count({

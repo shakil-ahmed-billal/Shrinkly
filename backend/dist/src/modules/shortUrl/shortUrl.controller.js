@@ -1,4 +1,4 @@
-import { shortUrlService } from "./shortUrl.service";
+import { shortUrlService } from "./shortUrl.service.js";
 const createShortUrl = async (req, res) => {
     try {
         const { originalUrl, shortCode } = req.body;
