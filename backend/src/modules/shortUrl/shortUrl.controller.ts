@@ -41,7 +41,7 @@ const createShortUrl = async (req: AuthRequest, res: Response) => {
 
 const getOriginalUrl = async (req: AuthRequest, res: Response) => {
   try {
-    const { code }:any = req.params;
+    const { code } = req.params as { code: string };
     const url = await shortUrlService.getOriginalUrl(code);
     return res.status(200).json({ success: true, data: url });
   } catch (error: any) {
@@ -54,7 +54,7 @@ const getOriginalUrl = async (req: AuthRequest, res: Response) => {
 
 const redirectToOriginal = async (req: AuthRequest, res: Response) => {
   try {
-    const { code }:any = req.params;
+    const { code } = req.params as { code: string };
     const url = await shortUrlService.getOriginalUrl(code);
 
     shortUrlService.incrementClicks(code).catch(console.error);
@@ -154,7 +154,7 @@ const checkShortCodeAvailability = async (req: AuthRequest, res: Response) => {
 
 const deleteShortUrl = async (req: AuthRequest, res: Response) => {
   try {
-    const { code }:any = req.params;
+    const { code } = req.params as { code: string };
 
     if (!req.user) {
       return res.status(401).json({

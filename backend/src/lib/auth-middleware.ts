@@ -7,6 +7,9 @@ export interface AuthRequest extends Request {
     email: string;
     name: string;
   };
+  params: Request["params"];
+  query: Request["query"];
+  body: Request["body"];
 }
 
 export const authMiddleware = async (
