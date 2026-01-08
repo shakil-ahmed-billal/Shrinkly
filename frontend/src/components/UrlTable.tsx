@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import useAxiosPublic from '@/hooks/useAxiosPublic';
 import { format } from 'date-fns';
 
 interface ShortenedUrl {
@@ -47,6 +48,7 @@ export default function UrlTable({ urls, onUrlDeleted }: UrlTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const axiosPublic = useAxiosPublic();
 
   const baseUrl = window.location.origin;
 
@@ -61,39 +63,31 @@ export default function UrlTable({ urls, onUrlDeleted }: UrlTableProps) {
     });
   };
 
-  const handleDelete = async (id: string) => {
-    setDeletingId(id);
-    // try {
-    //   const { error } = await supabase
-    //     .from('shortened_urls')
-    //     .delete()
-    //     .eq('id', id)
-    //     .eq('user_id', user?.id);
+  const handleDelete = async (code: string) => {
+    setDeletingId(code);
+    try {
+      const response = await axiosPublic.delete(`/api/short-urls/${code}`);
 
-    //   if (error) throw error;
+      if (!response.data?.success) {
+        throw new Error(response.data?.message || 'Failed to delete URL');
+      }
 
-    //   // Update URL count
-    //   const currentCount = urls.length;
-    //   await supabase
-    //     .from('profiles')
-    //     .update({ url_count: Math.max(0, currentCount - 1) })
-    //     .eq('id', user?.id);
+      toast({
+        title: 'Deleted',
+        description: 'URL has been removed',
+      });
 
-    //   toast({
-    //     title: 'Deleted',
-    //     description: 'URL has been removed',
-    //   });
-
-    //   onUrlDeleted();
-    // } catch (err: any) {
-    //   toast({
-    //     variant: 'destructive',
-    //     title: 'Error',
-    //     description: err.message || 'Failed to delete URL',
-    //   });
-    // } finally {
-    //   setDeletingId(null);
-    // }
+      onUrlDeleted();
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to delete URL';
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: errorMessage,
+      });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const truncateUrl = (url: string, maxLength: number = 50) => {
@@ -208,7 +202,7 @@ export default function UrlTable({ urls, onUrlDeleted }: UrlTableProps) {
                       <AlertDialogFooter>
                         <AlertDialogCancel className="border-border">Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => handleDelete(url.id)}
+                          onClick={() => handleDelete(url.short_code)}
                           className="bg-destructive hover:bg-destructive/90"
                         >
                           Delete

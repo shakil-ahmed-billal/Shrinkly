@@ -7,6 +7,7 @@ import UrlShortener from '@/components/UrlShortener';
 import UrlTable from '@/components/UrlTable';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import useAxiosPublic from '@/hooks/useAxiosPublic';
 
 interface ShortenedUrl {
   id: string;
@@ -25,6 +26,7 @@ export default function Dashboard() {
   const [urls, setUrls] = useState<ShortenedUrl[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(false);
+  const axiosPublic = useAxiosPublic();
   
   const { user, signOut, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -38,31 +40,27 @@ export default function Dashboard() {
   const fetchData = async () => {
     if (!user) return;
 
-    // try {
-    //   // Fetch profile
-    //   const { data: profileData } = await supabase
-    //     .from('profiles')
-    //     .select('url_count, max_urls')
-    //     .eq('id', user.id)
-    //     .maybeSingle();
+    setLoading(true);
+    try {
+      // Fetch URL count
+      const profileResponse = await axiosPublic.get("/api/short-urls/count");
+      if (profileResponse.data?.success) {
+        setProfile({
+          url_count: profileResponse.data.data.url_count,
+          max_urls: profileResponse.data.data.max_urls,
+        });
+      }
 
-    //   if (profileData) {
-    //     setProfile(profileData);
-    //   }
-
-    //   // Fetch URLs
-    //   const { data: urlsData } = await supabase
-    //     .from('shortened_urls')
-    //     .select('*')
-    //     .eq('user_id', user.id)
-    //     .order('created_at', { ascending: false });
-
-    //   if (urlsData) {
-    //     setUrls(urlsData);
-    //   }
-    // } finally {
-    //   setLoading(false);
-    // }
+      // Fetch URLs
+      const urlsResponse = await axiosPublic.get("/api/short-urls");
+      if (urlsResponse.data?.success) {
+        setUrls(urlsResponse.data.data);
+      }
+    } catch (error: any) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

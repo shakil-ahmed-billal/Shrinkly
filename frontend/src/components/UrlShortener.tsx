@@ -1,12 +1,15 @@
-import { useState } from 'react';
-import { Link2, Loader2, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
-import { z } from 'zod';
+"use client";
 
-const urlSchema = z.string().url({ message: 'Please enter a valid URL' });
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
+import { Link2, Loader2, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { z } from "zod";
+
+const urlSchema = z.string().url({ message: "Please enter a valid URL" });
 
 interface UrlShortenerProps {
   onUrlCreated: () => void;
@@ -14,39 +17,38 @@ interface UrlShortenerProps {
   maxUrls: number;
 }
 
-function generateShortCode(length: number = 6): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+function generateShortCode() {
+  // Generate random length between 6-8 characters
+  const length = Math.floor(Math.random() * 3) + 6; // 6, 7, or 8
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return Array.from({ length }, () =>
+    chars.charAt(Math.floor(Math.random() * chars.length))
+  ).join("");
 }
 
-export default function UrlShortener({ onUrlCreated, urlCount, maxUrls }: UrlShortenerProps) {
-  const [url, setUrl] = useState('');
+export default function UrlShortener({
+  onUrlCreated,
+  urlCount,
+  maxUrls,
+}: UrlShortenerProps) {
+  const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+
   const { user } = useAuth();
   const { toast } = useToast();
+  const axiosPublic = useAxiosPublic();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
-    if (urlCount >= maxUrls) {
-      toast({
-        variant: 'destructive',
-        title: 'Limit reached',
-        description: `You've reached your limit of ${maxUrls} URLs. Upgrade to create more!`,
-      });
-      return;
-    }
+    if (urlCount >= maxUrls) return;
 
-    // Validate URL
     let validatedUrl = url.trim();
-    if (!validatedUrl.startsWith('http://') && !validatedUrl.startsWith('https://')) {
-      validatedUrl = 'https://' + validatedUrl;
+    if (!validatedUrl.startsWith("http")) {
+      validatedUrl = `https://${validatedUrl}`;
     }
 
     const result = urlSchema.safeParse(validatedUrl);
@@ -57,111 +59,81 @@ export default function UrlShortener({ onUrlCreated, urlCount, maxUrls }: UrlSho
 
     setLoading(true);
 
-    // try {
-    //   // Generate unique short code
-    //   let shortCode = generateShortCode(6);
-    //   let attempts = 0;
-    //   const maxAttempts = 5;
+    try {
+      // Check if limit reached
+      if (urlCount >= maxUrls) {
+        toast({
+          variant: "destructive",
+          title: "Limit Reached",
+          description: `You've reached the maximum of ${maxUrls} URLs. Please upgrade to create more.`,
+        });
+        return;
+      }
 
-    //   while (attempts < maxAttempts) {
-    //     const { data: existing } = await supabase
-    //       .from('shortened_urls')
-    //       .select('id')
-    //       .eq('short_code', shortCode)
-    //       .maybeSingle();
+      const shortCode = generateShortCode(); // Generate 6-8 character code
+      const payload = {
+        originalUrl: validatedUrl,
+        shortCode: shortCode,
+      };
 
-    //     if (!existing) break;
-    //     shortCode = generateShortCode(7);
-    //     attempts++;
-    //   }
+      const res = await axiosPublic.post("/api/v1/shorten", payload);
 
-    //   // Insert the URL
-    //   const { error: insertError } = await supabase
-    //     .from('shortened_urls')
-    //     .insert({
-    //       user_id: user?.id,
-    //       original_url: validatedUrl,
-    //       short_code: shortCode,
-    //     });
+      if (!res.data?.success) {
+        throw new Error(res.data?.message || "URL shortening failed");
+      }
 
-    //   if (insertError) throw insertError;
+      toast({
+        title: "URL shortened!",
+        description: "Your link is ready to share 🎉",
+      });
 
-    //   // Update user's URL count
-    //   await supabase
-    //     .from('profiles')
-    //     .update({ url_count: urlCount + 1 })
-    //     .eq('id', user?.id);
-
-    //   toast({
-    //     title: 'URL shortened!',
-    //     description: 'Your link is ready to share.',
-    //   });
-
-    //   setUrl('');
-    //   onUrlCreated();
-    // } catch (err: any) {
-    //   toast({
-    //     variant: 'destructive',
-    //     title: 'Error',
-    //     description: err.message || 'Failed to shorten URL',
-    //   });
-    // } finally {
-    //   setLoading(false);
-    // }
+      setUrl("");
+      onUrlCreated();
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to shorten URL";
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const limitReached = urlCount >= maxUrls;
+  const isLimitReached = urlCount >= maxUrls;
 
   return (
-    <div className="glass-strong rounded-2xl p-6 animate-fade-in">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-          <Sparkles className="w-5 h-5 text-primary-foreground" />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">Shorten a URL</h2>
-          <p className="text-sm text-muted-foreground">
-            {urlCount} / {maxUrls} URLs used
-          </p>
-        </div>
-      </div>
-
-      {limitReached && (
-        <div className="mb-4 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
-          <p className="text-sm text-destructive font-medium">
-            You've reached your limit of {maxUrls} URLs. Upgrade to Pro for unlimited links!
-          </p>
-          <Button variant="outline" size="sm" className="mt-2">
-            Upgrade to Pro
-          </Button>
+    <div className="glass-strong rounded-2xl p-6">
+      {isLimitReached && (
+        <div className="mb-4 p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+          <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-500">
+            <Sparkles className="w-4 h-4" />
+            <p className="text-sm font-medium">
+              You've reached the limit of {maxUrls} URLs. Upgrade to create
+              more!
+            </p>
+          </div>
         </div>
       )}
-
       <form onSubmit={handleSubmit} className="flex gap-3">
         <div className="flex-1 relative">
-          <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" />
           <Input
-            type="text"
-            placeholder="Paste your long URL here..."
             value={url}
             onChange={(e) => setUrl(e.target.value)}
+            placeholder="Paste your long URL..."
             className="pl-10"
-            disabled={limitReached}
+            disabled={isLimitReached}
           />
         </div>
-        <Button
-          type="submit"
-          variant="glow"
-          disabled={loading || !url.trim() || limitReached}
-        >
-          {loading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            'Shorten'
-          )}
+        <Button disabled={loading || !url || isLimitReached}>
+          {loading ? <Loader2 className="animate-spin" /> : "Shorten"}
         </Button>
       </form>
-      {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+
+      {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
     </div>
   );
 }
