@@ -3,12 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowRight, Link2, Loader2, Lock, Mail } from "lucide-react";
+import { ArrowRight, Loader2, Lock, Mail } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useAuth } from "../../hooks/useAuth";
-import Link from "next/link";
+import Image from "next/image";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -42,7 +43,7 @@ export default function Auth() {
     setErrors({});
 
     // Validate inputs
-    const result:any = authSchema.safeParse({ email, password });
+    const result: any = authSchema.safeParse({ email, password });
     if (!result.success) {
       const fieldErrors: { email?: string; password?: string } = {};
       result.error.errors.forEach((err: any) => {
@@ -109,7 +110,6 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
-
       {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-surface" />
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -118,15 +118,17 @@ export default function Auth() {
       <div className="w-full max-w-md relative z-10 animate-fade-in">
         {/* Logo */}
         <Link href={"/"}>
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-primary mb-4 shadow-glow">
-            <Link2 className="w-8 h-8 text-primary-foreground" />
+          <div className="text-center mb-8">
+              <div className="flex items-center gap-3 cursor-pointer justify-center">
+                <Image src="/logo.png" alt="Shrinkly" width={32} height={32} />
+                <span className="text-xl font-bold text-foreground">
+                  Shrinkly
+                </span>
+              </div>
+            <p className="text-muted-foreground mt-2">
+              Shorten URLs, track clicks, grow faster
+            </p>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Shrinkly</h1>
-          <p className="text-muted-foreground mt-2">
-            Shorten URLs, track clicks, grow faster
-          </p>
-        </div>
         </Link>
 
         {/* Auth Card */}

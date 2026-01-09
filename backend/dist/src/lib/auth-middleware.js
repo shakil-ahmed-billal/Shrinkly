@@ -1,6 +1,7 @@
 import auth from "./auth.js";
 export const authMiddleware = async (req, res, next) => {
     try {
+        // Construct full request object for better-auth
         const sessionResult = await auth.api.getSession({
             headers: req.headers,
         });

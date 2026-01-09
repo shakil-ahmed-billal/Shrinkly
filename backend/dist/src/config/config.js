@@ -10,6 +10,12 @@ const config = {
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || "",
     JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
     APP_URL: process.env.APP_URL || "http://localhost:3000",
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || process.env.JWT_SECRET || "",
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || process.env.BACKEND_URL || (process.env.NODE_ENV === "production"
+        ? (process.env.VERCEL_URL
+            ? (process.env.VERCEL_URL.startsWith("http") ? process.env.VERCEL_URL : `https://${process.env.VERCEL_URL}`)
+            : process.env.VERCEL_PROJECT_PRODUCTION_URL || "")
+        : "http://localhost:8000"),
 };
 export default config;
 //# sourceMappingURL=config.js.map

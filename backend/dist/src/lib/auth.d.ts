@@ -1,5 +1,4 @@
-import { type BetterAuthOptions } from "better-auth";
-declare const auth: import("better-auth").Auth<BetterAuthOptions>;
+declare const auth: any;
 export default auth;
 export { auth };
 //# sourceMappingURL=auth.d.ts.map

@@ -18,7 +18,7 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   try {
-
+    // Construct full request object for better-auth
     const sessionResult = await auth.api.getSession({
       headers: req.headers as any,
     });

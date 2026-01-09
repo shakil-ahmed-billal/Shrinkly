@@ -7,6 +7,8 @@ declare const config: {
     JWT_REFRESH_SECRET: string;
     JWT_REFRESH_EXPIRES_IN: string;
     APP_URL: string;
+    BETTER_AUTH_SECRET: string;
+    BETTER_AUTH_URL: string;
 };
 export default config;
 //# sourceMappingURL=config.d.ts.map

@@ -7,6 +7,7 @@ import morgan from "morgan";
 import config from "./config/config.js";
 import { shortUrlRoutes } from "./modules/shortUrl/shortUrl.routes.js";
 import auth from "./lib/auth.js";
+import crossOriginMiddleware from "./middleware/cross-origin.js";
 
 
 dotenv.config();
@@ -14,10 +15,28 @@ dotenv.config();
 const app: Application = express();
 
 // CORS configuration
+const allowedOrigins = [
+  config.APP_URL || "http://localhost:3000",
+  "http://localhost:3000",
+  "https://shrinkly-gules.vercel.app",
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+];
+
 app.use(
   cors({
-    origin: config.APP_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["Set-Cookie"],
   })
 );
 
@@ -25,6 +44,9 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware to fix SameSite cookie attribute for cross-origin requests
+app.use(crossOriginMiddleware);
 
 // Short URL routes - register first
 app.use("/api", shortUrlRoutes);
