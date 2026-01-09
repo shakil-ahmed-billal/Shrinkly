@@ -1,0 +1,1 @@
+{"version":3,"file":"cross-origin.d.ts","sourceRoot":"","sources":["../../../src/middleware/cross-origin.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAE1D,QAAA,MAAM,qBAAqB,GACzB,KAAK,OAAO,EACZ,KAAK,QAAQ,EACb,MAAM,YAAY,SAwFnB,CAAC;AAEF,eAAe,qBAAqB,CAAC"}
